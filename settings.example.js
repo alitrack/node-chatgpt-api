@@ -41,7 +41,7 @@ export default {
         // Necessary for some people in different countries, e.g. China (https://cn.bing.com)
         host: '',
         // The "_U" cookie value from bing.com
-        userToken: '',
+        userToken: process.env.BING_USER_TOKEN||'',
         // If the above doesn't work, provide all your cookies as a string instead
         cookies: '',
         // A proxy string like "http://<ip>:<port>"
@@ -52,9 +52,9 @@ export default {
     chatGptBrowserClient: {
         // (Optional) Support for a reverse proxy for the conversation endpoint (private API server).
         // Warning: This will expose your access token to a third party. Consider the risks before using this.
-        reverseProxyUrl: 'https://bypass.churchless.tech/api/conversation',
+        reverseProxyUrl: process.env.API_REVERSE_PROXY ||'',
         // Access token from https://chat.openai.com/api/auth/session
-        accessToken: '',
+        accessToken: process.env.CHATGPT_ACCESS_TOKEN||'',
         // Cookies from chat.openai.com (likely not required if using reverse proxy server).
         cookies: '',
         // A proxy string like "http://<ip>:<port>"
@@ -64,12 +64,12 @@ export default {
     },
     // Options for the API server
     apiOptions: {
-        port: process.env.API_PORT || 3000,
-        host: process.env.API_HOST || 'localhost',
+        port: process.env.PORT || 3000,
+        host: process.env.HOST || 'localhost',
         // (Optional) Set to true to enable `console.debug()` logging
         debug: false,
         // (Optional) Possible options: "chatgpt", "chatgpt-browser", "bing". (Default: "chatgpt")
-        clientToUse: 'chatgpt',
+        clientToUse: process.env.CLIENT_TO_USE||'bing',
         // (Optional) Generate titles for each conversation for clients that support it (only ChatGPTClient for now).
         // This will be returned as a `title` property in the first response of the conversation.
         generateTitles: false,
@@ -98,6 +98,6 @@ export default {
     // Options for the CLI app
     cliOptions: {
         // (Optional) Possible options: "chatgpt", "bing".
-        // clientToUse: 'bing',
+        clientToUse: process.env.CLIENT_TO_USE||'bing',
     },
 };

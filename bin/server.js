@@ -10,7 +10,7 @@ import ChatGPTBrowserClient from '../src/ChatGPTBrowserClient.js';
 import BingAIClient from '../src/BingAIClient.js';
 
 const arg = process.argv.find(_arg => _arg.startsWith('--settings'));
-const path = arg?.split('=')[1] ?? './settings.js';
+const path = arg?.split('=')[1] ?? './settings.example.js';
 
 let settings;
 if (fs.existsSync(path)) {
@@ -78,6 +78,35 @@ server.post('/conversation', async (request, reply) => {
     let result;
     let error;
     try {
+        const ipAddress = request.ip;
+
+        let ip_whitelist = process.env.IP_WHITELIST || '';
+        if (ip_whitelist !== '') {
+            // Check IP white list.
+            if (!ip_whitelist.includes(ipAddress)) {
+                const invalidError = new Error();
+                invalidError.data = {
+                    code: 403,
+                    message: 'Forbidden',
+                };
+                // noinspection ExceptionCaughtLocallyJS
+                throw invalidError;
+            }
+        }
+        let secretKey = process.env.SECRET_KEY || '';
+        if (secretKey !== '') {
+            // Check API Secret Key.
+            console.debug(secretKey);
+            if (!body.secretKey || body.secretKey !== secretKey) {
+                const invalidError = new Error();
+                invalidError.data = {
+                    code: 401,
+                    message: 'Unauthorized',
+                };
+                // noinspection ExceptionCaughtLocallyJS
+                throw invalidError;
+            }
+        }
         if (!body.message) {
             const invalidError = new Error();
             invalidError.data = {
